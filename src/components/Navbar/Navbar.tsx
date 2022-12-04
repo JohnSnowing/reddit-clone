@@ -3,6 +3,7 @@ import { User } from "firebase/auth";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase/clientApp";
+import Directory from "./Directory/Directory";
 import RightContent from "./RightContent/RightContent";
 import SearchInput from "./SearchInput";
 
@@ -19,6 +20,7 @@ const Navbar: React.FC = () => {
                 align="center"
                 width={{ base: "40px", md: "auto" }}
                 mr={{ base: 0, md: 2 }}
+                cursor="pointer"
             >
                 <Image src="/images/redditFace.svg" height="30px" />
                 <Image
@@ -27,11 +29,9 @@ const Navbar: React.FC = () => {
                     display={{ base: "none", md: "unset" }}
                 />
             </Flex>
+            {user && <Directory />}
             <SearchInput user={user as User} />
             <RightContent user={user as User} />
-            {/* <Directory />
-            <SearchInput />
-            <RightContent /> */}
         </Flex>
     );
 };
