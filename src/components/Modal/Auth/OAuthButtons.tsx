@@ -1,5 +1,4 @@
 import { Button, Flex, Image, Text } from "@chakra-ui/react";
-import { type } from "os";
 import React from "react";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { ModalView } from "../../../atoms/authModalAtoms";
