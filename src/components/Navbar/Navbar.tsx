@@ -22,11 +22,16 @@ const Navbar: React.FC = () => {
                 mr={{ base: 0, md: 2 }}
                 cursor="pointer"
             >
-                <Image src="/images/redditFace.svg" height="30px" />
+                <Image
+                    src="/images/redditFace.svg"
+                    height="30px"
+                    alt="reddit-logo"
+                />
                 <Image
                     src="/images/redditText.svg"
                     height="46px"
                     display={{ base: "none", md: "unset" }}
+                    alt="reddit-text"
                 />
             </Flex>
             {user && <Directory />}

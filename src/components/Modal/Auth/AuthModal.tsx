@@ -1,15 +1,11 @@
 import {
-    Button,
     Flex,
     Modal,
     ModalBody,
     ModalCloseButton,
     ModalContent,
-    ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Text,
-    useDisclosure,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import React, { useEffect } from "react";
@@ -78,10 +74,6 @@ const AuthModal: React.FC = () => {
                             ) : (
                                 <ResetPassword toggleView={toggleView} />
                             )}
-
-                            {/* <OauthButtons />
-                            
-                            <ResetPassword /> */}
                         </Flex>
                     </ModalBody>
                 </ModalContent>

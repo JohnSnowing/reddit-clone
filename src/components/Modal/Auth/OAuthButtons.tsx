@@ -19,7 +19,12 @@ const OAuthButtons: React.FC<OAuthButtonsProps> = ({ toggleView }) => {
                 onClick={() => signInWithGoogle()}
                 isLoading={loading}
             >
-                <Image src="/images/googlelogo.png" height="20px" mr={4} />
+                <Image
+                    src="/images/googlelogo.png"
+                    height="20px"
+                    mr={4}
+                    alt="google-icon"
+                />
                 Continue with Google
             </Button>
             <Button variant="oauth">Some other Provider</Button>
