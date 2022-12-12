@@ -13,9 +13,11 @@ import {
     ModalFooter,
     Button,
 } from "@chakra-ui/react";
+import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
 import React, { useState } from "react";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
+import { firestore } from "../../../firebase/clientApp";
 import ModalWrapper from "../CreateCommunityModal";
 
 type CreateCommunityModalProps = {
@@ -52,7 +54,46 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
         setCommunityType(name);
     };
 
-    const handleCreateCommunity = async () => {};
+    const handleCreateCommunity = async () => {
+        if (nameError) setNameError("");
+        const format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+        if (format.test(name) || name.length < 3) {
+            return setNameError(
+                "Community names must be between 3-21 characters, and can only contain letters, numbers or underscores.",
+            );
+        }
+
+        setLoading(true);
+
+        try {
+            const communityDocRef = doc(firestore, "communities", name);
+            await runTransaction(firestore, async (transaction) => {
+                const communityDoc = await transaction.get(communityDocRef);
+                if (communityDoc.exists()) {
+                    throw new Error(`Sorry, /r${name} is taken. Try another.`);
+                }
+
+                transaction.set(communityDocRef, {
+                    creatorId: userId,
+                    createdAt: serverTimestamp(),
+                    numberOfMembers: 1,
+                    privacyType: communityType,
+                });
+
+                transaction.set(
+                    doc(firestore, `users/${userId}/communitySnippets`, name),
+                    { communityId: name, isModerator: true },
+                );
+            });
+        } catch (error: any) {
+            console.log("Transaction error: ", error);
+            setNameError(error.message);
+        }
+
+        handleClose();
+        setLoading(false);
+    };
 
     return (
         <ModalWrapper isOpen={isOpen} onClose={handleClose}>
