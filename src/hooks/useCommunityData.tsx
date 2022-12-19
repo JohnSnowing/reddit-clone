@@ -44,5 +44,21 @@ const useCommunityData = (ssrCommunityData?: boolean) => {
 
         setLoading(false);
     };
+
+    const onJoinLeaveCommunity = (community: Community, isJoined?: boolean) => {
+        if (!user) {
+            setAuthModalState({ open: true, view: "login" });
+        }
+
+        setLoading(true);
+    };
+
+    return {
+        communityStateValue,
+        onJoinLeaveCommunity,
+        loading,
+        setLoading,
+        error,
+    };
 };
 export default useCommunityData;
