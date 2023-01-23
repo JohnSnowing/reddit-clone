@@ -27,7 +27,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                     />
                     <Stack direction="row" mt={4}>
                         <Button
-                            height="20px"
+                            height="28px"
                             onClick={() => setSelectedTab("Post")}
                         >
                             Back to Post
