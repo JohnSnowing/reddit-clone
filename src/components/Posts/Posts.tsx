@@ -6,6 +6,7 @@ import { Community } from "../../atoms/communitiesAtom";
 import { Post } from "../../atoms/postsAtom";
 import { firestore } from "../../firebase/clientApp";
 import usePosts from "../../hooks/usePosts";
+import PostItem from "./PostItem";
 import PostLoader from "./PostLoader";
 
 type PostsProps = {
@@ -85,7 +86,23 @@ const Posts: React.FC<PostsProps> = ({
             {loading ? (
                 <PostLoader />
             ) : (
-                <Stack>{postStateValue.posts.toString()}</Stack>
+                <Stack>
+                    {postStateValue.posts.map((post: Post, index) => (
+                        <PostItem
+                            key={post.id}
+                            post={post}
+                            onVote={onVote}
+                            onDeletePost={onDeletePost}
+                            userVoteValue={
+                                postStateValue.postVotes.find(
+                                    (item) => item.postId === post.id,
+                                )?.voteValue
+                            }
+                            userIsCreator={userId === post.creatorId}
+                            onSelectPost={onSelectPost}
+                        />
+                    ))}
+                </Stack>
             )}
         </>
     );

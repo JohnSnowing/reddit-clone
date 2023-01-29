@@ -36,7 +36,7 @@ const usePosts = (communityData?: Community) => {
     };
 
     const onVote = async (
-        event: React.MouseEvent<SVGAElement, MouseEvent>,
+        event: React.MouseEvent<SVGElement, MouseEvent>,
         post: Post,
         vote: number,
         communityId: string,
