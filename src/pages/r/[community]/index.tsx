@@ -1,15 +1,17 @@
 import { doc, getDoc } from "firebase/firestore";
 import { GetServerSidePropsContext } from "next";
-import React from "react";
+import React, { useEffect } from "react";
 import { auth, firestore } from "../../../firebase/clientApp";
 import safeJsonStringify from "safe-json-stringify";
-import { Community } from "../../../atoms/communitiesAtom";
+import { Community, communityState } from "../../../atoms/communitiesAtom";
 import CommunityNotFound from "../../../components/Community/CommunityNotFound";
 import Header from "../../../components/Community/Header";
 import PageContentLayout from "../../../components/Layout/PageContent";
 import CreatePostLink from "../../../components/Community/CreatePostLink";
 import Posts from "../../../components/Posts/Posts";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { useRecoilState } from "recoil";
+import About from "../../../components/Community/About";
 
 type CommunityPageProps = {
     communityData: Community;
@@ -17,6 +19,17 @@ type CommunityPageProps = {
 
 const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
     const [user, loadingUser] = useAuthState(auth);
+
+    const [communityStateValue, setCommunityStateValue] =
+        useRecoilState(communityState);
+
+    useEffect(() => {
+        setCommunityStateValue((prev) => ({
+            ...prev,
+            currentCommunity: communityData,
+        }));
+    }, [communityData]);
+
     if (!communityData) {
         return <CommunityNotFound />;
     }
@@ -34,7 +47,9 @@ const CommunityPage: React.FC<CommunityPageProps> = ({ communityData }) => {
                         loadingUser={loadingUser}
                     />
                 </>
-                <></>
+                <>
+                    <About communityData={communityData} />
+                </>
             </PageContentLayout>
         </>
     );

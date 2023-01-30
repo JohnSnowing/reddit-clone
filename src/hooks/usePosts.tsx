@@ -145,7 +145,8 @@ const usePosts = (communityData?: Community) => {
         }
     };
 
-    const onDeletePost = async (post: Post) => {
+    const onDeletePost = async (post: Post): Promise<boolean> => {
+        console.log("Deleting post", post.id);
         try {
             if (post.imageUrl) {
                 const imageRef = ref(storage, `posts/${post.id}/image`);
@@ -157,7 +158,7 @@ const usePosts = (communityData?: Community) => {
 
             setPostStateValue((prev) => ({
                 ...prev,
-                posts: prev.posts.filter((item) => item.id === post.id),
+                posts: prev.posts.filter((item) => item.id !== post.id),
                 postsCache: {
                     ...prev.postsCache,
                     [post.communityId]: prev.postsCache[

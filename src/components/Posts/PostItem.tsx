@@ -67,6 +67,7 @@ const PostItem: React.FC<PostItemProps> = ({
             if (!success) throw new Error("Failed to delete post");
 
             console.log("success delete");
+            setLoadingDelete(false);
 
             if (router) router.back();
         } catch (error: any) {
