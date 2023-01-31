@@ -88,6 +88,8 @@ const About: React.FC<AboutProps> = ({
         } catch (error: any) {
             console.log("updateImage", error.message);
         }
+
+        setImageLoading(false);
     };
     return (
         <Box pt={pt} position="sticky" top="140px">
