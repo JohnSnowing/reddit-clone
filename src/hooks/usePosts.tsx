@@ -80,7 +80,7 @@ const usePosts = (communityData?: Community) => {
                 const postVoteRef = doc(
                     firestore,
                     "users",
-                    `${user.uid}/postVotes${existingVote.id}`,
+                    `${user.uid}/postVotes/${existingVote.id}`,
                 );
 
                 //remove vote
