@@ -10,6 +10,7 @@ import PageContentLayout from "../../../../components/Layout/PageContent";
 import PostLoader from "../../../../components/Posts/PostLoader";
 import PostItem from "../../../../components/Posts/PostItem";
 import About from "../../../../components/Community/About";
+import Comments from "../../../../components/Posts/Comments/Comments";
 
 type PostPageProps = {};
 
@@ -78,11 +79,11 @@ const PostPage: React.FC<PostPageProps> = () => {
                                     }
                                     router={router}
                                 />
-                                {/* <Comments
-                  user={user}
-                  community={community as string}
-                  selectedPost={postStateValue.selectedPost}
-                /> */}
+                                <Comments
+                                    user={user}
+                                    community={commmunity as string}
+                                    selectedPost={postStateValue.selectedPost}
+                                />
                             </>
                         )}
                     </>
