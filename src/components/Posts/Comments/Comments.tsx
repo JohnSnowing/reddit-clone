@@ -7,10 +7,22 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { User } from "firebase/auth";
-import React, { useEffect, useState } from "react";
+import {
+    collection,
+    doc,
+    getDocs,
+    increment,
+    orderBy,
+    query,
+    serverTimestamp,
+    where,
+    writeBatch,
+} from "firebase/firestore";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSetRecoilState } from "recoil";
 import { authModalState } from "../../../atoms/authModalAtoms";
 import { Post, postState } from "../../../atoms/postsAtom";
+import { firestore } from "../../../firebase/clientApp";
 import CommentInput from "./CommentInput";
 import CommentItem, { Comment } from "./CommentItem";
 
@@ -33,11 +45,127 @@ const Comments: React.FC<CommentsProps> = ({
     const setAuthModalState = useSetRecoilState(authModalState);
     const setPostState = useSetRecoilState(postState);
 
-    const onCreateComment = async () => {};
+    const onCreateComment = async (comment: string) => {
+        if (!user) {
+            setAuthModalState({ open: true, view: "login" });
+            return;
+        }
 
-    const onDeleteComment = async () => {};
+        setCommentCreateLoading(true);
 
-    const getPostComments = async () => {};
+        try {
+            const batch = writeBatch(firestore);
+
+            const commentDocRef = doc(collection(firestore, "comments"));
+            batch.set(commentDocRef, {
+                postId: selectedPost.id,
+                creatorId: user.uid,
+                creatorDisplayText: user.email!.split("@")[0],
+                creatorPhotoUrl: user.photoURL,
+                communityId: community,
+                text: comment,
+                postTitle: selectedPost.title,
+                createdAt: serverTimestamp(),
+            } as Comment);
+
+            batch.update(doc(firestore, "posts", selectedPost.id), {
+                numberOfComments: increment(1),
+            });
+            await batch.commit();
+
+            setComment("");
+
+            const { id: postId, title } = selectedPost;
+            setComments((prev) => [
+                {
+                    id: commentDocRef.id,
+                    creatorId: user.uid,
+                    creatorDisplayText: user.email!.split("@")[0],
+                    creatorPhotoUrl: user.photoURL,
+                    communityId: community,
+                    postId,
+                    postTitle: title,
+                    text: comment,
+                    createdAt: {
+                        seconds: Date.now() / 1000,
+                    },
+                } as Comment,
+                ...prev,
+            ]);
+
+            setPostState((prev) => ({
+                ...prev,
+                selectedPost: {
+                    ...prev.selectedPost,
+                    numberOfComments: prev.selectedPost?.numberOfComments! + 1,
+                } as Post,
+                postUpdateRequired: true,
+            }));
+        } catch (error: any) {
+            console.log(error.message);
+        }
+    };
+
+    const onDeleteComment = useCallback(
+        async (comment: Comment) => {
+            setDeleteLoading(comment.id as string);
+
+            try {
+                if (!comment.id) throw "Comment has no ID";
+
+                const batch = writeBatch(firestore);
+                const commentDocRef = doc(firestore, "comments", comment.id);
+                batch.delete(commentDocRef);
+
+                batch.update(doc(firestore, "posts", comment.postId), {
+                    numberOfComments: increment(1),
+                });
+
+                await batch.commit();
+
+                setPostState((prev) => ({
+                    ...prev,
+                    selectedPost: {
+                        ...prev.selectedPost,
+                        numberOfComments:
+                            prev.selectedPost?.numberOfComments! - 1,
+                    } as Post,
+                    postUpdateRequired: true,
+                }));
+
+                setComments((prev) =>
+                    prev.filter((item) => item.id !== comment.id),
+                );
+            } catch (error: any) {
+                console.log(error.message);
+            }
+
+            setDeleteLoading("");
+        },
+        [setComments, setPostState],
+    );
+
+    const getPostComments = async () => {
+        try {
+            const commentsQuery = query(
+                collection(firestore, "comments"),
+                where("postId", "==", selectedPost.id),
+                orderBy("createdAt", "desc"),
+            );
+
+            const commentDocs = await getDocs(commentsQuery);
+            const comments = commentDocs.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setComments(comments as Comment[]);
+        } catch (error: any) {
+            console.log(error.message);
+        }
+
+        setCommentFetchLoading(false);
+    };
 
     useEffect(() => {
         getPostComments();
@@ -54,7 +182,7 @@ const Comments: React.FC<CommentsProps> = ({
                 width="100%"
             >
                 <CommentInput
-                    comment=""
+                    comment={comment}
                     setComment={setComment}
                     loading={commentCreateLoading}
                     user={user}
