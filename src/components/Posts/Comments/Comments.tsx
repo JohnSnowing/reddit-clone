@@ -104,6 +104,7 @@ const Comments: React.FC<CommentsProps> = ({
         } catch (error: any) {
             console.log(error.message);
         }
+        setCommentCreateLoading(false);
     };
 
     const onDeleteComment = useCallback(
@@ -152,18 +153,15 @@ const Comments: React.FC<CommentsProps> = ({
                 where("postId", "==", selectedPost.id),
                 orderBy("createdAt", "desc"),
             );
-
             const commentDocs = await getDocs(commentsQuery);
             const comments = commentDocs.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
-
             setComments(comments as Comment[]);
         } catch (error: any) {
-            console.log(error.message);
+            console.log("getPostComments error", error.message);
         }
-
         setCommentFetchLoading(false);
     };
 

@@ -17,7 +17,7 @@ type PostPageProps = {};
 const PostPage: React.FC<PostPageProps> = () => {
     const [user] = useAuthState(auth);
     const router = useRouter();
-    const { commmunity, pid } = router.query;
+    const { community, pid } = router.query;
     const { communityStateValue } = useCommunityData();
 
     const {
@@ -81,7 +81,7 @@ const PostPage: React.FC<PostPageProps> = () => {
                                 />
                                 <Comments
                                     user={user}
-                                    community={commmunity as string}
+                                    community={community as string}
                                     selectedPost={postStateValue.selectedPost}
                                 />
                             </>
