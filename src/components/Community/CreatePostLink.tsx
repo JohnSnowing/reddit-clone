@@ -10,7 +10,7 @@ type CreatePostLinkProps = {};
 
 const CreatePostLink: React.FC<CreatePostLinkProps> = () => {
     const router = useRouter();
-    // const { toggleMenuOpen } = useDirectory();
+    const { toggleMenuOpen } = useDirectory();
 
     const onClick = () => {
         const { community } = router.query;
@@ -19,7 +19,7 @@ const CreatePostLink: React.FC<CreatePostLinkProps> = () => {
             return;
         }
 
-        // toggleMenuOpen
+        toggleMenuOpen();
     };
     return (
         <Flex
