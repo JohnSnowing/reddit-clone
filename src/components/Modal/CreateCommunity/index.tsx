@@ -14,10 +14,14 @@ import {
     Button,
 } from "@chakra-ui/react";
 import { doc, runTransaction, serverTimestamp } from "firebase/firestore";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { BsFillEyeFill, BsFillPersonFill } from "react-icons/bs";
 import { HiLockClosed } from "react-icons/hi";
+import { useSetRecoilState } from "recoil";
+import { communityState } from "../../../atoms/communitiesAtom";
 import { firestore } from "../../../firebase/clientApp";
+import useDirectory from "../../../hooks/useDirectory";
 import ModalWrapper from "../CreateCommunityModal";
 
 type CreateCommunityModalProps = {
@@ -31,11 +35,14 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
     handleClose,
     userId,
 }) => {
+    const setSnippetState = useSetRecoilState(communityState);
     const [name, setName] = useState("");
     const [charsRemaining, setCharsRemaining] = useState(21);
     const [nameError, setNameError] = useState("");
     const [communityType, setCommunityType] = useState("public");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+    const { toggleMenuOpen } = useDirectory();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.value.length > 21) return;
@@ -91,7 +98,13 @@ const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
             setNameError(error.message);
         }
 
+        setSnippetState((prev) => ({
+            ...prev,
+            mySnippets: [],
+        }));
         handleClose();
+        toggleMenuOpen();
+        router.push(`r/${name}`);
         setLoading(false);
     };
 

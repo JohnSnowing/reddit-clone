@@ -17,6 +17,7 @@ import { useRecoilValue } from "recoil";
 import { communityState } from "../atoms/communitiesAtom";
 import { Post, PostVote } from "../atoms/postsAtom";
 import CreatePostLink from "../components/Community/CreatePostLink";
+import Recommendations from "../components/Community/Recommendations";
 import PageContentLayout from "../components/Layout/PageContent";
 import PostItem from "../components/Posts/PostItem";
 import PostLoader from "../components/Posts/PostLoader";
@@ -60,7 +61,7 @@ const Home: NextPage = () => {
                                     "==",
                                     myCommunityIds[index],
                                 ),
-                                limit(3),
+                                limit(10),
                             ),
                         ),
                     );
@@ -152,7 +153,7 @@ const Home: NextPage = () => {
         if (user) {
             getUserHomePosts();
         }
-    }, []);
+    }, [user, communityStateValue.initSnippetsFetched]);
 
     useEffect(() => {
         if (!user && !loadingUser) {
@@ -201,7 +202,9 @@ const Home: NextPage = () => {
                     </Stack>
                 )}
             </>
-            <Stack spacing={5} position="sticky" top="14px"></Stack>
+            <Stack spacing={5} position="sticky" top="14px">
+                <Recommendations />
+            </Stack>
         </PageContentLayout>
     );
 };

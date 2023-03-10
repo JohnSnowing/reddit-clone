@@ -52,6 +52,7 @@ const PostItem: React.FC<PostItemProps> = ({
     userIsCreator,
     homePage,
 }) => {
+    console.log("post", post.communityImageUrl);
     const [loadingImage, setLoadingImage] = useState(true);
     const [loadingDelete, setLoadingDelete] = useState(false);
     const singlePostView = !onSelectPost;
