@@ -17,6 +17,8 @@ import { useRecoilValue } from "recoil";
 import { communityState } from "../atoms/communitiesAtom";
 import { Post, PostVote } from "../atoms/postsAtom";
 import CreatePostLink from "../components/Community/CreatePostLink";
+import PersonalHome from "../components/Community/PersonalHome";
+import Premium from "../components/Community/Premium";
 import Recommendations from "../components/Community/Recommendations";
 import PageContentLayout from "../components/Layout/PageContent";
 import PostItem from "../components/Posts/PostItem";
@@ -41,6 +43,7 @@ const Home: NextPage = () => {
         setLoading(true);
         try {
             const feedPosts: Post[] = [];
+            console.log("sdt", communityStateValue);
 
             if (communityStateValue.mySnippets.length) {
                 const myCommunityIds = communityStateValue.mySnippets.map(
@@ -152,12 +155,14 @@ const Home: NextPage = () => {
 
         if (user) {
             getUserHomePosts();
+            console.log("hrere");
         }
     }, [user, communityStateValue.initSnippetsFetched]);
 
     useEffect(() => {
         if (!user && !loadingUser) {
             getNoUserHomePosts();
+            console.log("pasok");
         }
     }, [user, loadingUser]);
 
@@ -173,6 +178,8 @@ const Home: NextPage = () => {
             }));
         };
     }, [postStateValue.posts, user?.uid]);
+
+    console.log("loading postVotes,", postStateValue);
 
     return (
         <PageContentLayout>
@@ -204,6 +211,8 @@ const Home: NextPage = () => {
             </>
             <Stack spacing={5} position="sticky" top="14px">
                 <Recommendations />
+                <Premium />
+                <PersonalHome />
             </Stack>
         </PageContentLayout>
     );
